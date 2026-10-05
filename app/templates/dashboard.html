@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}Dashboard · BC Integration{% endblock %}
+{% block content %}
+<h1 class="text-3xl font-bold">Business Central Dashboard</h1>
+<p class="mt-1 text-slate-500">Live status and sample data from the configured BC API.</p>
+<div class="mt-8 grid gap-5 md:grid-cols-3">
+<div class="rounded-2xl border bg-white p-5 shadow-sm"><p class="text-sm text-slate-500">BC Connection</p>
+<p class="mt-2 text-2xl font-bold {% if health.ok %}text-emerald-600{% else %}text-red-600{% endif %}">{{ "Connected" if health.ok else "Unavailable" }}</p>
+<p class="mt-2 text-sm text-slate-500">{{ health.message }}</p></div>
+<div class="rounded-2xl border bg-white p-5 shadow-sm"><p class="text-sm text-slate-500">HTTP Status</p><p class="mt-2 text-2xl font-bold">{{ health.status_code or "—" }}</p></div>
+<div class="rounded-2xl border bg-white p-5 shadow-sm"><p class="text-sm text-slate-500">Items Retrieved</p><p class="mt-2 text-2xl font-bold">{{ item_count }}</p></div>
+</div>
+<div class="mt-8 overflow-hidden rounded-2xl border bg-white shadow-sm">
+<div class="border-b px-5 py-4"><h2 class="font-semibold">Business Central Items</h2></div>
+{% if items %}<div class="overflow-x-auto"><table class="min-w-full text-sm">
+<thead class="bg-slate-50 text-left"><tr><th class="px-5 py-3">No.</th><th class="px-5 py-3">Description</th><th class="px-5 py-3">Type</th></tr></thead>
+<tbody class="divide-y">{% for item in items %}<tr>
+<td class="px-5 py-3">{{ item.get("number", item.get("id", "—")) }}</td>
+<td class="px-5 py-3">{{ item.get("displayName", item.get("description", "—")) }}</td>
+<td class="px-5 py-3">{{ item.get("type", "—") }}</td>
+</tr>{% endfor %}</tbody></table></div>
+{% else %}<div class="p-8 text-center text-slate-500">No item data available. Configure and test the BC connection.</div>{% endif %}
+</div>
+{% endblock %}

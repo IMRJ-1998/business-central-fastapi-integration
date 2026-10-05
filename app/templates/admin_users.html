@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}Users · BC Integration{% endblock %}
+{% block content %}
+<h1 class="text-3xl font-bold">User Management</h1><p class="mt-1 text-slate-500">Manage dashboard administrators and viewers.</p>
+<div class="mt-8 grid gap-8 lg:grid-cols-3">
+<div class="rounded-2xl border bg-white p-6 shadow-sm"><h2 class="font-semibold">Create User</h2>
+<form method="post" action="/admin/users" class="mt-5 space-y-3">
+<input name="username" required placeholder="Username" class="w-full rounded-lg border px-3 py-2">
+<input name="password" required minlength="10" type="password" placeholder="Password (10+ chars)" class="w-full rounded-lg border px-3 py-2">
+<select name="role" class="w-full rounded-lg border px-3 py-2"><option value="viewer">Viewer</option><option value="admin">Admin</option></select>
+<button class="w-full rounded-lg bg-slate-900 px-4 py-2.5 font-semibold text-white">Create</button>
+</form></div>
+<div class="lg:col-span-2 overflow-hidden rounded-2xl border bg-white shadow-sm"><table class="min-w-full text-sm">
+<thead class="bg-slate-50 text-left"><tr><th class="px-5 py-3">Username</th><th class="px-5 py-3">Role</th><th class="px-5 py-3">Status</th><th class="px-5 py-3"></th></tr></thead>
+<tbody class="divide-y">{% for u in users %}<tr>
+<td class="px-5 py-3 font-medium">{{ u.username }}</td><td class="px-5 py-3">{{ u.role }}</td>
+<td class="px-5 py-3">{{ "Active" if u.is_active else "Disabled" }}</td>
+<td class="px-5 py-3 text-right">{% if u.id != user.id %}<form method="post" action="/admin/users/{{ u.id }}/delete" onsubmit="return confirm('Delete this user?')"><button class="text-red-600">Delete</button></form>{% else %}<span class="text-slate-400">Current user</span>{% endif %}</td>
+</tr>{% endfor %}</tbody></table></div></div>
+{% endblock %}

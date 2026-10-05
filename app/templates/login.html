@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Log in · BC Integration</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{{ url_for('static', path='css/login.css') }}">
+</head>
+<body>
+<div aria-hidden="true" class="blob b1 drift"></div>
+<div aria-hidden="true" class="blob b2 drift drift2"></div>
+<div aria-hidden="true" class="blob b3"></div>
+<div aria-hidden="true" class="grain"></div>
+<main class="stage">
+<div class="card-wrap">
+<div class="card" id="card">
+<div class="view form" id="formView">
+<header class="rise" style="--i:0">
+<h1>welcome back.</h1>
+<p class="sub">log in to pick up where you left off.</p>
+</header>
+<form action="/login" class="login-form" id="form" method="post" novalidate="">
+<div class="rise" style="--i:1">
+<label for="username">username</label>
+<div class="field" id="usernameField">
+<input autocomplete="username" id="username" name="username" placeholder="enter your username" required="" type="text"/>
+</div>
+</div>
+<div class="rise password-group" style="--i:2">
+<label for="pw">password</label>
+<div class="field has-btn" id="pwField">
+<input autocomplete="current-password" id="pw" name="password" placeholder="••••••••" required="" type="password"/>
+<button aria-label="show password" aria-pressed="false" class="eye-btn" id="eye" type="button">
+<svg aria-hidden="true" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewbox="0 0 24 24">
+<g class="eye-shape">
+<path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12z"></path>
+<circle class="pupil" cx="12" cy="12" r="2.8"></circle>
+</g>
+<path class="slash" d="M4 4l16 16"></path>
+</svg>
+</button>
+</div>
+</div>
+<p aria-live="polite" class="helper{% if error %} on bad{% endif %}" id="helper" role="status">{% if error %}{{ error }}{% endif %}</p>
+<div class="rise" style="--i:3">
+<button class="cta" id="cta" type="submit"><span class="txt">log in</span><span class="spin"></span></button>
+
+
+</div>
+</form>
+
+</div>
+<div aria-live="polite" class="ok view" id="okView">
+<svg class="ring" viewbox="0 0 56 56"><circle cx="28" cy="28" r="24"></circle><path d="M18 29l7 7 13-14"></path></svg>
+<h1>you're in.</h1>
+<p class="sub">taking you to your dashboard…</p>
+</div>
+</div>
+</div>
+</main>
+<script src="{{ url_for('static', path='js/login.js') }}"></script>
+</body>
+</html>

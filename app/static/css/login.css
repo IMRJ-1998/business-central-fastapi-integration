@@ -1,0 +1,102 @@
+:root{
+  --bg:#0b0c10; --ink:#ecebf5; --mute:#8b8aa0;
+  --lav:169,156,255; --em:61,220,151; --coral:255,138,107;
+  --glow:var(--lav);
+  --mx:0; --my:0;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+html,body{height:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:'Outfit',ui-sans-serif,system-ui,-apple-system,'Segoe UI',sans-serif;letter-spacing:.01em;overflow:hidden}
+
+/* ambient background: 3 blobs, transform-only, parallax via CSS vars */
+.blob{position:fixed;border-radius:50%;filter:blur(90px);opacity:.5;pointer-events:none;will-change:transform;
+  transform:translate3d(calc(var(--mx)*var(--d)*1px),calc(var(--my)*var(--d)*1px),0)}
+.b1{--d:-40;width:46vmax;height:46vmax;left:-12vmax;top:-14vmax;background:rgb(var(--lav))}
+.b2{--d:55;width:40vmax;height:40vmax;right:-14vmax;bottom:-12vmax;background:#0f8f6a}
+.b3{--d:25;width:22vmax;height:22vmax;right:18%;top:8%;background:#5b4bd6;opacity:.3}
+.drift{animation:drift 18s ease-in-out infinite alternate}
+.drift2{animation-duration:24s;animation-direction:alternate-reverse}
+@keyframes drift{to{margin:3vmax 0 0 4vmax}}
+.grain{position:fixed;inset:0;pointer-events:none;background:radial-gradient(ellipse at center,transparent 40%,rgba(0,0,0,.55))}
+
+/* layout */
+.stage{position:relative;min-height:100%;display:grid;place-items:center;padding:1.25rem}
+.card-wrap{width:min(100%,24rem)}
+.card{position:relative;padding:2rem 1.75rem;border-radius:1.5rem;
+  background:linear-gradient(160deg,rgba(255,255,255,.07),rgba(255,255,255,.025));
+  -webkit-backdrop-filter:blur(18px) saturate(140%);backdrop-filter:blur(18px) saturate(140%);
+  border:1px solid rgba(255,255,255,.1);
+  box-shadow:0 0 0 1px rgba(var(--lav),.08),0 30px 60px -20px rgba(0,0,0,.7),0 0 60px -25px rgba(var(--lav),.45),inset 0 1px 0 rgba(255,255,255,.08);
+  transform:translate3d(calc(var(--mx)*-.15px),calc(var(--my)*-.15px),0)}
+.shake{animation:shake .5s cubic-bezier(.36,.07,.19,.97)}
+@keyframes shake{10%,90%{transform:translateX(-2px)}20%,80%{transform:translateX(4px)}30%,50%,70%{transform:translateX(-8px)}40%,60%{transform:translateX(8px)}}
+
+/* staggered entry (one orchestrated moment) */
+.rise{opacity:0;transform:translateY(14px);animation:rise .7s cubic-bezier(.2,.8,.2,1) forwards;animation-delay:calc(var(--i)*80ms + 100ms)}
+@keyframes rise{to{opacity:1;transform:none}}
+
+h1{font-size:1.9rem;font-weight:500;letter-spacing:-.02em;line-height:1.1;margin:0}
+.sub{color:var(--mute);font-size:.9rem;margin:.5rem 0 0}
+label{display:block;font-size:.78rem;color:var(--mute);margin:0 0 .4rem .2rem;transition:color .3s}
+
+/* fields */
+.field{position:relative;border-radius:.9rem;background:rgba(8,9,13,.55);border:1px solid rgba(255,255,255,.1);
+  transition:border-color .35s,box-shadow .35s}
+.field:focus-within{border-color:rgba(var(--glow),.7);box-shadow:0 0 0 4px rgba(var(--glow),.12),0 0 24px -6px rgba(var(--glow),.5)}
+.field.revealed{--glow:var(--em)}
+.field.revealed:not(:focus-within){border-color:rgba(var(--em),.45)}
+.field.err{border-color:rgba(var(--coral),.9)!important;box-shadow:0 0 0 4px rgba(var(--coral),.14),0 0 24px -6px rgba(var(--coral),.55)!important}
+.field input{width:100%;background:transparent;border:0;outline:0;color:var(--ink);font:inherit;font-size:.95rem;padding:.85rem 1rem;border-radius:inherit}
+.field input::placeholder{color:#5d5c70}
+.field.has-btn input{padding-right:3rem}
+
+/* eye */
+.eye-btn{position:absolute;right:.3rem;top:50%;translate:0 -50%;width:2.4rem;height:2.4rem;display:grid;place-items:center;
+  background:none;border:0;border-radius:.7rem;color:var(--mute);cursor:pointer;transition:color .3s,background .2s}
+.eye-btn:hover{background:rgba(255,255,255,.06);color:var(--ink)}
+.eye-btn:focus-visible,.cta:focus-visible{outline:2px solid rgb(var(--lav));outline-offset:2px}
+.revealed .eye-btn{color:rgb(var(--em))}
+.eye-btn svg{width:1.3rem;height:1.3rem;overflow:visible}
+.eye-shape{transform-origin:12px 12px;transform-box:fill-box}
+.pupil{transform-origin:center;transform-box:fill-box;transition:transform .25s}
+.slash{stroke-dasharray:26;stroke-dashoffset:0;transition:stroke-dashoffset .3s cubic-bezier(.6,0,.2,1)}
+.revealed .slash{stroke-dashoffset:26}
+.blink .eye-shape{animation:blink .32s cubic-bezier(.5,0,.3,1)}
+@keyframes blink{45%{transform:scaleY(.08)}100%{transform:scaleY(1)}}
+.eye-btn:active svg{transform:scale(.88);transition:transform .1s}
+
+/* helper text */
+.helper{min-height:1.25rem;font-size:.82rem;margin:.6rem 0 0 .2rem;color:var(--mute);opacity:0;transform:translateY(-4px);transition:opacity .3s,transform .3s,color .3s}
+.helper.on{opacity:1;transform:none}
+.helper.bad{color:rgb(var(--coral))}
+
+.cta{position:relative;width:100%;margin-top:.9rem;padding:.9rem 1rem;border:0;border-radius:.9rem;font:inherit;font-weight:500;font-size:.95rem;color:#0b0c10;cursor:pointer;
+  background:linear-gradient(135deg,#c9c0ff,#a99cff 55%,#8f86f5);box-shadow:0 10px 30px -10px rgba(var(--lav),.7);
+  transition:transform .2s,box-shadow .3s,filter .2s}
+.cta:hover{transform:translateY(-1px);box-shadow:0 14px 34px -10px rgba(var(--lav),.9)}
+.cta:active{transform:scale(.98)}
+.cta[disabled]{filter:saturate(.6) brightness(.9);cursor:progress}
+.spin{display:none;width:1rem;height:1rem;border-radius:50%;border:2px solid rgba(11,12,16,.25);border-top-color:#0b0c10;animation:sp .7s linear infinite;margin:0 auto}
+.loading .spin{display:block}.loading .txt{display:none}
+@keyframes sp{to{transform:rotate(360deg)}}
+
+
+/* success */
+.view{transition:opacity .4s,transform .4s}
+.done .view.form{opacity:0;transform:translateY(-10px);pointer-events:none;position:absolute;inset:2rem 1.75rem auto}
+.ok{display:none;text-align:center;padding:1rem 0}
+.done .ok{display:block;animation:rise .6s cubic-bezier(.2,.8,.2,1) both}
+.ring{width:4.5rem;height:4.5rem;margin:0 auto 1.25rem;filter:drop-shadow(0 0 18px rgba(var(--em),.5))}
+.ring circle,.ring path{fill:none;stroke:rgb(var(--em));stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.ring circle{stroke-dasharray:151;stroke-dashoffset:151;animation:draw .7s .1s ease forwards}
+.ring path{stroke-dasharray:34;stroke-dashoffset:34;animation:draw .4s .6s ease forwards}
+@keyframes draw{to{stroke-dashoffset:0}}
+
+@media (prefers-reduced-motion:reduce){
+  .rise{animation-duration:.01s;animation-delay:0s}.drift{animation:none}.shake,.blink .eye-shape{animation:none}
+}
+
+.login-form{margin-top:2rem}
+.password-group{margin-top:1rem}

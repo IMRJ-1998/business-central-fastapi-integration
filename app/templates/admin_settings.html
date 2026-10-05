@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block title %}BC Settings · BC Integration{% endblock %}
+{% block content %}
+<h1 class="text-3xl font-bold">Business Central Integration</h1>
+<p class="mt-1 text-slate-500">Select the authentication method supported by your BC/API environment.</p>
+{% if request.query_params.get("saved") %}<div class="mt-6 rounded-lg bg-emerald-50 p-3 text-sm text-emerald-700">Configuration saved.</div>{% endif %}
+{% if test_result %}<div class="mt-6 rounded-lg {% if test_result.ok %}bg-emerald-50 text-emerald-700{% else %}bg-red-50 text-red-700{% endif %} p-4 text-sm">
+<b>{{ "Connection successful" if test_result.ok else "Connection failed" }}</b> — {{ test_result.message }}{% if test_result.status_code %} (HTTP {{ test_result.status_code }}){% endif %}
+</div>{% endif %}
+<div class="mt-8 max-w-4xl rounded-2xl border bg-white p-6 shadow-sm">
+<form method="post" action="/admin/settings" class="space-y-6">
+<label class="block text-sm font-medium">Business Central API Base URL
+<input name="bc_api_base_url" required value="{{ config.bc_api_base_url }}" placeholder="https://.../api/v2.0" class="mt-1 w-full rounded-lg border px-3 py-2"></label>
+<label class="block text-sm font-medium">Authentication Method
+<select id="auth_type" name="bc_auth_type" onchange="toggleAuth()" class="mt-1 w-full rounded-lg border px-3 py-2">
+<option value="entra_id" {% if config.bc_auth_type == "entra_id" %}selected{% endif %}>Microsoft Entra ID (OAuth 2.0)</option>
+<option value="basic" {% if config.bc_auth_type == "basic" %}selected{% endif %}>Basic Authentication</option>
+</select></label>
+<div class="border-t pt-6"><h2 class="font-semibold">Common Configuration</h2>
+<label class="mt-4 block text-sm font-medium">Company ID
+<input name="bc_company_id" value="{{ config.bc_company_id }}" class="mt-1 w-full rounded-lg border px-3 py-2"></label></div>
+<div id="entra_fields" class="border-t pt-6"><h2 class="font-semibold">Microsoft Entra ID / OAuth 2.0</h2>
+<div class="mt-4 grid gap-4 md:grid-cols-2">
+<label class="text-sm font-medium">Tenant ID<input name="entra_tenant_id" value="{{ config.entra_tenant_id }}" class="mt-1 w-full rounded-lg border px-3 py-2"></label>
+<label class="text-sm font-medium">Client ID<input name="entra_client_id" value="{{ config.entra_client_id }}" class="mt-1 w-full rounded-lg border px-3 py-2"></label>
+<label class="text-sm font-medium md:col-span-2">Client Secret<input name="entra_client_secret" type="password" value="{{ config.entra_client_secret }}" class="mt-1 w-full rounded-lg border px-3 py-2"></label>
+<label class="text-sm font-medium md:col-span-2">OAuth Scope<input name="entra_scope" value="{{ config.entra_scope }}" class="mt-1 w-full rounded-lg border px-3 py-2"></label>
+</div></div>
+<div id="basic_fields" class="border-t pt-6"><h2 class="font-semibold">Basic Authentication</h2>
+<div class="mt-4 grid gap-4 md:grid-cols-2">
+<label class="text-sm font-medium">Username<input name="basic_username" value="{{ config.basic_username }}" class="mt-1 w-full rounded-lg border px-3 py-2"></label>
+<label class="text-sm font-medium">Password / Access Key<input name="basic_password" type="password" value="{{ config.basic_password }}" class="mt-1 w-full rounded-lg border px-3 py-2"></label>
+</div></div>
+<button class="rounded-lg bg-slate-900 px-5 py-2.5 font-semibold text-white">Save Configuration</button>
+</form>
+<form method="post" action="/admin/settings/test" class="mt-3"><button class="rounded-lg border px-5 py-2.5 font-semibold">Test Connection</button></form>
+<p class="mt-6 text-xs text-slate-500">For non-local deployment, use HTTPS, secure cookies, CSRF protection, rate limiting, secret encryption/management, and least-privilege BC permissions.</p>
+</div>
+<script>
+function toggleAuth() {
+  const type = document.getElementById("auth_type").value;
+  document.getElementById("entra_fields").style.display = type === "entra_id" ? "block" : "none";
+  document.getElementById("basic_fields").style.display = type === "basic" ? "block" : "none";
+}
+toggleAuth();
+</script>
+{% endblock %}
